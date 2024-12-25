@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import BookCard from '../../components/BookCard';
+import BookCard from '../components/BookCard.tsx';
 
 const Home: React.FC = () => {
   const [books, setBooks] = useState([]);
