@@ -21,6 +21,8 @@ model Book {
   author   String
   content  String
   category String
+  genre    String?   // Mark as optional
+  filePath String?   // Add filePath as optional
   users    UserBook[]
 }
 

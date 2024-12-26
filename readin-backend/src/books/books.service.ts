@@ -1,11 +1,48 @@
 import { Injectable } from '@nestjs/common';
-      import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma.service';
 
-      @Injectable()
-      export class BooksService {
-        constructor(private prisma: PrismaService) {}
+// Define the Book interface
+export interface Book {
+  id: number;
+  title: string;
+  author: string;
+  content: string;
+  category: string;
+  genre?: string; // Mark genre as optional
+  filePath?: string; // Optional if it may not always be present
+}
 
-        async getBooks() {
-          return this.prisma.book.findMany();
-        }
-      }
+@Injectable()
+export class BooksService {
+  constructor(private prisma: PrismaService) {}
+
+  async getBooks(): Promise<Book[]> {
+    return this.prisma.book.findMany();
+  }
+
+  // New method to fetch a book by ID, including file path
+  async getBookById(id: number): Promise<Book | null> {
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        content: true,
+        category: true,
+        genre: true, // Ensure genre is included
+        filePath: true, // Include file path in the response
+      },
+    });
+
+    // Return the book with the file URL if it exists
+    if (book) {
+      return {
+        ...book,
+        filePath: book.filePath ? `/uploads/${book.filePath}` : undefined, // Construct the file URL if filePath exists
+      };
+    }
+
+    return null; // Return null if no book is found
+  }
+}
