@@ -8,11 +8,13 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Book" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "title" TEXT NOT NULL,
-    "author" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "category" TEXT NOT NULL
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "author" TEXT NOT NULL,
+  "content" TEXT NOT NULL,
+  "category" TEXT NOT NULL,
+  "genre" TEXT,
+  "filePath" TEXT
 );
 
 -- CreateTable

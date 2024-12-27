@@ -17,10 +17,21 @@ export class BooksService {
   constructor(private prisma: PrismaService) {}
 
   async getBooks(): Promise<Book[]> {
-    return this.prisma.book.findMany();
+    // Explicitly select all fields, including optional ones
+    return this.prisma.book.findMany({
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        content: true,
+        category: true,
+        genre: true,
+        filePath: true,
+      },
+    });
   }
 
-  // New method to fetch a book by ID, including file path
+
   async getBookById(id: number): Promise<Book | null> {
     const book = await this.prisma.book.findUnique({
       where: { id },
@@ -31,7 +42,7 @@ export class BooksService {
         content: true,
         category: true,
         genre: true, // Ensure genre is included
-        filePath: true, // Include file path in the response
+        filePath: true, // Ensure filePath is included
       },
     });
 
