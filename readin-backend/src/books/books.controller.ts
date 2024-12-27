@@ -8,14 +8,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { MetadataService } from './metadata.service'; // Import MetadataService
+import { MetadataService } from '../metadata/metadata.service'; // Import MetadataService
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express'; // Ensure proper import of Express types
 
 @Controller('books')
 export class BooksController {
   constructor(
     private booksService: BooksService,
-    private metadataService: MetadataService // Inject the MetadataService
+    private metadataService: MetadataService, // Inject MetadataService
   ) {}
 
   @Get()

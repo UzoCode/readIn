@@ -8,7 +8,7 @@
     "outDir": "dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node", "react", "react-dom"],
+    "types": ["node", "react", "react-dom", "multer"], // Added multer here
     "jsx": "react" // Add this line if using React
   },
   "include": [
