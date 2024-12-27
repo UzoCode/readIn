@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import apiClient from "../api/axios.ts";
+import { FaCloudUploadAlt } from "react-icons/fa"; // Importing the upload icon
 
 const UploadBook: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -7,6 +8,37 @@ const UploadBook: React.FC = () => {
   const [genre, setGenre] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
+
+  const extractMetadata = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await apiClient.post("/books/extract-metadata", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data; // Metadata from the backend
+    } catch (error) {
+      console.error("Metadata extraction failed:", error);
+      throw new Error("Failed to extract metadata");
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      try {
+        const metadata = await extractMetadata(selectedFile);
+        setTitle(metadata.title || "");
+        setAuthor(metadata.author || "");
+        setGenre(metadata.genre || "");
+      } catch {
+        setMessage("Failed to extract metadata. Please try again.");
+      }
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +60,14 @@ const UploadBook: React.FC = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      setMessage("Book uploaded successfully!");
+      setMessage("File uploaded successfully!");
     } catch (err) {
-      setMessage("Failed to upload book. Please try again.");
+      setMessage("Failed to upload file. Please try again.");
     }
   };
 
   return (
-    <div>
+    <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h1>Upload a Book</h1>
       <form onSubmit={handleUpload}>
         <div>
@@ -44,7 +76,6 @@ const UploadBook: React.FC = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
           />
         </div>
         <div>
@@ -53,7 +84,6 @@ const UploadBook: React.FC = () => {
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            required
           />
         </div>
         <div>
@@ -62,7 +92,6 @@ const UploadBook: React.FC = () => {
             type="text"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
-            required
           />
         </div>
         <div>
@@ -70,11 +99,27 @@ const UploadBook: React.FC = () => {
           <input
             type="file"
             accept=".pdf,.epub"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            required
+            onChange={handleFileChange}
           />
         </div>
-        <button type="submit">Upload</button>
+        <button
+          type="submit"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            padding: "10px 20px",
+            background: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          <FaCloudUploadAlt size={20} />
+          Upload
+        </button>
       </form>
       {message && <p>{message}</p>}
     </div>

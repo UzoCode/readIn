@@ -8,17 +8,22 @@ export interface Book {
   author: string;
   content: string;
   category: string;
-  genre?: string; // Mark genre as optional
-  filePath?: string; // Optional if it may not always be present
+  genre: string | null | undefined; // Allow both null and undefined
+  filePath: string | null | undefined; // Same adjustment for filePath
 }
+
 
 @Injectable()
 export class BooksService {
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * Retrieve all books from the database.
+   * @returns A promise that resolves to an array of Book objects.
+   */
   async getBooks(): Promise<Book[]> {
     // Explicitly select all fields, including optional ones
-    return this.prisma.book.findMany({
+    const books = await this.prisma.book.findMany({
       select: {
         id: true,
         title: true,
@@ -29,9 +34,20 @@ export class BooksService {
         filePath: true,
       },
     });
+
+    // Map the results to ensure genre and filePath are properly typed
+    return books.map(book => ({
+      ...book,
+      genre: book.genre ?? undefined, // Convert null to undefined
+      filePath: book.filePath ?? undefined, // Convert null to undefined
+    }));
   }
 
-
+  /**
+   * Retrieve a book by its ID.
+   * @param id - The ID of the book to retrieve.
+   * @returns A promise that resolves to a Book object or null if not found.
+   */
   async getBookById(id: number): Promise<Book | null> {
     const book = await this.prisma.book.findUnique({
       where: { id },
@@ -51,6 +67,7 @@ export class BooksService {
       return {
         ...book,
         filePath: book.filePath ? `/uploads/${book.filePath}` : undefined, // Construct the file URL if filePath exists
+        genre: book.genre ?? undefined, // Convert null to undefined
       };
     }
 

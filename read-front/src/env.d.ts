@@ -18,3 +18,18 @@ export interface Book {
   genre: string;
   fileUrl: string;
 }
+
+// Declare module for epub-gen
+declare module 'epub-gen' {
+  interface EpubOptions {
+    title: string;
+    author: string;
+    content: Array<{ title: string; data: string }>;
+    // Add other options as needed
+  }
+
+  export default class Epub {
+    constructor(options: EpubOptions);
+    generate(outputPath: string): Promise<void>;
+  }
+}

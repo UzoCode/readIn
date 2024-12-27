@@ -22,9 +22,13 @@
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
     "bcrypt": "^5.1.1",
+    "buffer": "^6.0.3",
+    "epub-gen": "^0.1.0",
+    "epub-parser": "^0.2.5",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pdf-lib": "^1.17.1",
     "prisma": "^6.1.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
@@ -32,6 +36,7 @@
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
+    "@types/epub-gen": "^0.1.2",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",

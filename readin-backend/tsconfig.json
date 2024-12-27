@@ -8,8 +8,13 @@
     "outDir": "dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node", "react", "react-dom"]
+    "types": ["node", "react", "react-dom"],
+    "jsx": "react" // Add this line if using React
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/@types/**/*.d.ts" // Include custom types if applicable
+  ],
   "exclude": ["node_modules"]
 }

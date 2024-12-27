@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import apiClient from "../api/axios.ts";
+import UploadBook from "./UploadBook.tsx"; // Import UploadBook component
 
 interface Book {
   id: number;
@@ -16,6 +17,7 @@ const BooksList: React.FC = () => {
   const [genreFilter, setGenreFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showUpload, setShowUpload] = useState<boolean>(false); // State to toggle upload form
   const booksPerPage = 5;
 
   useEffect(() => {
@@ -69,7 +71,21 @@ const BooksList: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">Books List</h1>
+      <header className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Books List</h1>
+        <button
+          onClick={() => setShowUpload((prev) => !prev)}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          {showUpload ? "Close Upload" : "Upload a Book"}
+        </button>
+      </header>
+
+      {showUpload && (
+        <div className="mb-6">
+          <UploadBook />
+        </div>
+      )}
 
       <div className="mb-6">
         <label htmlFor="searchQuery" className="mr-2 font-semibold">
@@ -110,7 +126,6 @@ const BooksList: React.FC = () => {
             <h2 className="font-bold text-lg">{book.title}</h2>
             <p className="text-gray-700">by {book.author}</p>
             <p className="text-sm text-gray-500">Genre: {book.genre}</p>
-            {/* Add navigation link */}
             <Link
               to={`/books/${book.id}`}
               className="text-blue-500 hover:underline mt-2 block"
