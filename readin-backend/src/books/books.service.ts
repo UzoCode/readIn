@@ -6,12 +6,11 @@ export interface Book {
   id: number;
   title: string;
   author: string;
-  content: string;
-  category: string;
+  content: string; // Required field
+  category: string; // Required field
   genre: string | null | undefined; // Allow both null and undefined
   filePath: string | null | undefined; // Same adjustment for filePath
 }
-
 
 @Injectable()
 export class BooksService {
@@ -22,7 +21,6 @@ export class BooksService {
    * @returns A promise that resolves to an array of Book objects.
    */
   async getBooks(): Promise<Book[]> {
-    // Explicitly select all fields, including optional ones
     const books = await this.prisma.book.findMany({
       select: {
         id: true,
@@ -35,11 +33,10 @@ export class BooksService {
       },
     });
 
-    // Map the results to ensure genre and filePath are properly typed
     return books.map(book => ({
       ...book,
-      genre: book.genre ?? undefined, // Convert null to undefined
-      filePath: book.filePath ?? undefined, // Convert null to undefined
+      genre: book.genre ?? undefined,
+      filePath: book.filePath ?? undefined,
     }));
   }
 
@@ -57,20 +54,42 @@ export class BooksService {
         author: true,
         content: true,
         category: true,
-        genre: true, // Ensure genre is included
-        filePath: true, // Ensure filePath is included
+        genre: true,
+        filePath: true,
       },
     });
 
-    // Return the book with the file URL if it exists
     if (book) {
       return {
         ...book,
-        filePath: book.filePath ? `/uploads/${book.filePath}` : undefined, // Construct the file URL if filePath exists
-        genre: book.genre ?? undefined, // Convert null to undefined
+        filePath: book.filePath ? `/uploads/${book.filePath}` : undefined,
+        genre: book.genre ?? undefined,
       };
     }
 
     return null; // Return null if no book is found
+  }
+
+  /**
+   * Save a new book to the database.
+   * @param bookData - The data of the book to save.
+   * @returns A promise that resolves to the created Book object.
+   */
+  async saveBook(bookData: { title: string; author: string; genre: string; filePath: string; content: string; category: string }): Promise<Book> {
+    const { title, author, genre, filePath, content, category } = bookData;
+
+    // Create a new book entry in the database
+    const newBook = await this.prisma.book.create({
+      data: {
+        title,
+        author,
+        genre,
+        filePath,
+        content,
+        category,
+      },
+    });
+
+    return newBook;
   }
 }
