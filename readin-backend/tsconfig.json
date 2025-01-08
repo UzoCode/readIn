@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "commonJS",
     "target": "ES6",
     "strict": true,
     "esModuleInterop": true,
@@ -8,6 +8,7 @@
     "outDir": "dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
     "types": ["node", "react", "react-dom", "multer"], // Added multer here
     "jsx": "react" // Add this line if using React
   },
