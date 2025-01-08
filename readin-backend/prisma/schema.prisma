@@ -16,13 +16,13 @@ model User {
 }
 
 model Book {
-  id       Int       @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   title    String
   author   String
   content  String
   category String
-  genre    String?   // Mark as optional
-  filePath String?   // Add filePath as optional
+  genre    String?  // Optional field
+  filePath String?  // Optional field
   users    UserBook[]
 }
 
