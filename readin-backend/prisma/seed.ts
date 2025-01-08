@@ -1,45 +1,32 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create Users
+  // Create a sample user
   const user = await prisma.user.create({
     data: {
-      username: "johndoe",
-      email: "john@example.com",
-      password: "securepassword",
+      username: 'Uzo',
+      email: 'akosabenedict@gmail.com',
+      password: 'password123',
     },
   });
 
-  // Create Books
-  const book1 = await prisma.book.create({
+  // Create a sample book
+  const book = await prisma.book.create({
     data: {
-      title: "Book 1",
-      author: "Author 1",
-      category: "Fiction",
-      content: "Lorem ipsum...",
+      title: 'Sample Book',
+      author: 'Author Name',
+      content: 'This is a sample book content.',
+      category: 'Fiction',
     },
   });
 
-  const book2 = await prisma.book.create({
-    data: {
-      title: "Book 2",
-      author: "Author 2",
-      category: "Science",
-      content: "Lorem ipsum...",
-    },
-  });
-
-  // Create Favorite Relationships
-  await prisma.userBook.createMany({
-    data: [
-      { userId: user.id, bookId: book1.id },
-      { userId: user.id, bookId: book2.id },
-    ],
-  });
+  console.log({ user, book });
 }
 
 main()
-  .catch(e => console.error(e))
-  .finally(() => prisma.$disconnect());
+  .catch((e) => console.error(e))
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
