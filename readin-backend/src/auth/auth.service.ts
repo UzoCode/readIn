@@ -34,12 +34,16 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<{ token: string; user: { id: number; username: string; email: string } }> {
     const { email, password } = loginDto;
+
+    // Find the user by email
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) throw new UnauthorizedException('Invalid email or password');
 
+    // Compare the password
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new UnauthorizedException('Invalid email or password');
 
+    // Generate JWT token
     const token = jwt.sign({ userId: user.id }, 'your-secret-key', { expiresIn: '1h' });
     return {
       token,
