@@ -23,6 +23,7 @@ model Book {
   category String
   genre    String?  // Optional field
   filePath String?  // Optional field
+  readingProgress Int?
   users    UserBook[]
 }
 
