@@ -7,6 +7,8 @@ import {
   UseInterceptors,
   NotFoundException,
   Body,
+  Delete,
+  Patch,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { MetadataService } from '../metadata/metadata.service'; // Import MetadataService
@@ -73,5 +75,28 @@ export class BooksController {
     });
 
     return { message: 'Book uploaded successfully!', file }; // Return success message
+  }
+
+  // Endpoint to delete a book by its ID
+  @Delete(':id')
+  async deleteBook(@Param('id') id: string) {
+    const deleted = await this.booksService.deleteBook(+id); // Call the service method to delete a book
+    if (!deleted) {
+      throw new NotFoundException(`Book with ID ${id} not found`); // Handle not found case
+    }
+    return { message: `Book with ID ${id} deleted successfully.` }; // Return success message
+  }
+
+  // Endpoint to save reading progress
+  @Patch(':id/progress')
+  async saveReadingProgress(
+    @Param('id') id: string,
+    @Body() body: { progress: number } // Assuming progress is a number representing the current page or position
+  ) {
+    const updatedBook = await this.booksService.saveReadingProgress(+id, body.progress); // Call the service method to save reading progress
+    if (!updatedBook) {
+      throw new NotFoundException(`Book with ID ${id} not found`); // Handle not found case
+    }
+    return { message: `Reading progress for book ID ${id} saved successfully.`, updatedBook }; // Return success message
   }
 }
