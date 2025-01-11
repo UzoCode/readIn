@@ -10,6 +10,7 @@ export interface Book {
   category: string; // Required field
   genre: string | null | undefined; // Allow both null and undefined
   filePath: string | null | undefined; // Same adjustment for filePath
+  readingProgress?: number; // Optional field for reading progress
 }
 
 @Injectable()
@@ -30,6 +31,7 @@ export class BooksService {
         category: true,
         genre: true,
         filePath: true,
+        readingProgress: true, // Include reading progress in the selection
       },
     });
 
@@ -37,6 +39,7 @@ export class BooksService {
       ...book,
       genre: book.genre ?? undefined,
       filePath: book.filePath ?? undefined,
+      readingProgress: book.readingProgress ?? undefined, // Convert null to undefined
     }));
   }
 
@@ -56,17 +59,19 @@ export class BooksService {
         category: true,
         genre: true,
         filePath: true,
+        readingProgress: true, // Include reading progress in the selection
       },
     });
-
+  
     if (book) {
       return {
         ...book,
         filePath: book.filePath ? `/uploads/${book.filePath}` : undefined,
         genre: book.genre ?? undefined,
+        readingProgress: book.readingProgress ?? undefined, // Convert null to undefined
       };
     }
-
+  
     return null; // Return null if no book is found
   }
 
@@ -75,9 +80,9 @@ export class BooksService {
    * @param bookData - The data of the book to save.
    * @returns A promise that resolves to the created Book object.
    */
-  async saveBook(bookData: { title: string; author: string; genre: string; filePath: string; content: string; category: string }): Promise<Book> {
-    const { title, author, genre, filePath, content, category } = bookData;
-
+  async saveBook(bookData: { title: string; author: string; genre: string; filePath: string; content: string; category: string; readingProgress?: number | null }): Promise<Book> {
+    const { title, author, genre, filePath, content, category, readingProgress = null } = bookData; // Default to null if not provided
+  
     // Create a new book entry in the database
     const newBook = await this.prisma.book.create({
       data: {
@@ -87,9 +92,45 @@ export class BooksService {
         filePath,
         content,
         category,
+        readingProgress, // Include reading progress
       },
     });
+  
+    // Convert readingProgress to undefined if it's null
+    return {
+      ...newBook,
+      readingProgress: newBook.readingProgress ?? undefined, // Convert null to undefined
+    };
+  }
 
-    return newBook;
+  /**
+   * Delete a book by its ID.
+   * @param id - The ID of the book to delete.
+   * @returns A promise that resolves to a boolean indicating success.
+   */
+  async deleteBook(id: number): Promise<boolean> {
+    const deletedBook = await this.prisma.book.delete({
+      where: { id },
+    });
+    return !!deletedBook; // Return true if a book was deleted
+  }
+
+  /**
+   * Save reading progress for a book.
+   * @param id - The ID of the book to update.
+   * @param progress - The reading progress to save.
+   * @returns A promise that resolves to the updated Book object or null if not found.
+   */
+  async saveReadingProgress(id: number, progress: number): Promise<Book | null> {
+    const updatedBook = await this.prisma.book.update({
+      where: { id },
+      data: { readingProgress: progress }, // Update the reading progress
+    });
+  
+    // Convert readingProgress to undefined if it's null
+    return {
+      ...updatedBook,
+      readingProgress: updatedBook.readingProgress ?? undefined, // Convert null to undefined
+    };
   }
 }
