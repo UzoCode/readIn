@@ -55,13 +55,14 @@ const UploadBook: React.FC = () => {
     formData.append("genre", genre);
 
     try {
-      await apiClient.post("/books/upload", formData, {
+      await apiClient.post("/books/upload", formData, { // Ensure this matches your backend route
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       setMessage("File uploaded successfully!");
     } catch (err) {
+      console.error("Upload error:", err); // Log the error for debugging
       setMessage("Failed to upload file. Please try again.");
     }
   };
