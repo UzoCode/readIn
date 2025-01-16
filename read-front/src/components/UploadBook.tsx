@@ -1,8 +1,11 @@
+// UploadBook.tsx
 import React, { useState } from "react";
 import apiClient from "../api/axios.ts";
 import { FaCloudUploadAlt } from "react-icons/fa"; // Importing the upload icon
+import { useBooks } from "./BookContext.tsx"; // Import the useBooks hook
 
 const UploadBook: React.FC = () => {
+  const { addBook } = useBooks(); // Get the addBook function from context
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
@@ -55,12 +58,20 @@ const UploadBook: React.FC = () => {
     formData.append("genre", genre);
 
     try {
-      await apiClient.post("/books/upload", formData, { // Ensure this matches your backend route
+      const response = await apiClient.post("/books/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       setMessage("File uploaded successfully!");
+
+      // Add the new book to the context
+      addBook({
+        id: response.data.id, // Assuming the backend returns the book ID
+        title: response.data.title,
+        author: response.data.author,
+        genre: response.data.genre,
+      });
     } catch (err) {
       console.error("Upload error:", err); // Log the error for debugging
       setMessage("Failed to upload file. Please try again.");
