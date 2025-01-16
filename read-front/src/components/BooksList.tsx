@@ -1,7 +1,8 @@
+// BooksList.tsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
-import apiClient from "../api/axios.ts";
-import UploadBook from "./UploadBook.tsx"; // Import UploadBook component
+import { useBooks } from "./BookContext.tsx"; // Import useBooks hook
+import UploadBook from "./UploadBook.tsx"; // Adjust the path as necessary
 
 interface Book {
   id: number;
@@ -11,7 +12,7 @@ interface Book {
 }
 
 const BooksList: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const { books } = useBooks(); // Get books from context
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [genreFilter, setGenreFilter] = useState<string>("All");
@@ -19,20 +20,6 @@ const BooksList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showUpload, setShowUpload] = useState<boolean>(false); // State to toggle upload form
   const booksPerPage = 5;
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await apiClient.get("/books");
-        setBooks(response.data); // Assuming response.data contains the list of books
-        setFilteredBooks(response.data);
-      } catch (err: any) {
-        setError("Failed to fetch books. Please try again.");
-      }
-    };
-
-    fetchBooks();
-  }, []);
 
   useEffect(() => {
     let updatedBooks = books;
@@ -124,7 +111,7 @@ const BooksList: React.FC = () => {
             className="border p-4 rounded shadow-sm hover:shadow-md transition-shadow"
           >
             <h2 className="font-bold text-lg">{book.title}</h2>
-            <p className="text-gray-700">by {book.author}</p>
+            <p className="text-gray-700">by { book.author}</p>
             <p className="text-sm text-gray-500">Genre: {book.genre}</p>
             <Link
               to={`/books/${book.id}`}
