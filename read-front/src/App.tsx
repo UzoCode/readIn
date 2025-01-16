@@ -1,11 +1,13 @@
+// App.tsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
-import BookList from "./components/BooksList.tsx";
+import BookList from "./components/BooksList.tsx"; // Ensure this is the correct path
 import BookDetails from "./components/BookDetails.tsx"; // Import the BookDetails component
 import Signup from "./components/Signup.tsx";
 import Login from "./components/Login.tsx";
 import AuthenticatedLayout from "./components/AuthenticatedLayout.tsx";
+import UploadBook from "./components/UploadBook.tsx"; // Import the UploadBook component
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 
@@ -29,6 +31,7 @@ function App() {
         >
           <Route index element={<BookList />} />
           <Route path="books/:id" element={<BookDetails />} />
+          <Route path="upload" element={<UploadBook />} /> {/* Add route for UploadBook */}
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
