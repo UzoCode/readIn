@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { useBooks } from "./BookContext.tsx"; // Import useBooks hook
-import UploadBook from "./UploadBook.tsx"; // Adjust the path as necessary
+import UploadBook from "./UploadBook.tsx"; // Ensure this path is correct
 
 interface Book {
   id: number;
@@ -14,7 +14,7 @@ interface Book {
 const BooksList: React.FC = () => {
   const { books } = useBooks(); // Get books from context
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // State for error handling
   const [genreFilter, setGenreFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -22,6 +22,13 @@ const BooksList: React.FC = () => {
   const booksPerPage = 5;
 
   useEffect(() => {
+    // Check if books are available
+    if (books.length === 0) {
+      setError("No books available."); // Set error if no books are found
+    } else {
+      setError(null); // Clear error if books are available
+    }
+
     let updatedBooks = books;
 
     if (genreFilter !== "All") {
@@ -52,10 +59,6 @@ const BooksList: React.FC = () => {
     }
   };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div className="p-4">
       <header className="flex justify-between items-center mb-4">
@@ -73,6 +76,8 @@ const BooksList: React.FC = () => {
           <UploadBook />
         </div>
       )}
+
+      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error message */}
 
       <div className="mb-6">
         <label htmlFor="searchQuery" className="mr-2 font-semibold">
@@ -101,55 +106,37 @@ const BooksList: React.FC = () => {
           <option value="All">All</option>
           <option value="Fiction">Fiction</option>
           <option value="Non-Fiction">Non-Fiction</option>
+          <option value="Science">Science</option>
+          <option value="Fantasy">Fantasy</option>
+          <option value="Biography">Biography</option>
         </select>
       </div>
 
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <ul className="list-disc pl-5">
         {currentBooks.map((book) => (
-          <li
-            key={book.id}
-            className="border p-4 rounded shadow-sm hover:shadow-md transition-shadow"
-          >
-            <h2 className="font-bold text-lg">{book.title}</h2>
-            <p className="text-gray-700">by { book.author}</p>
-            <p className="text-sm text-gray-500">Genre: {book.genre}</p>
-            <Link
-              to={`/books/${book.id}`}
-              className="text-blue-500 hover:underline mt-2 block"
-            >
-              Read More
+          <li key={book.id} className=" mb-2">
+            <Link to={`/books/${book.id}`} className="text-blue-500 hover:underline">
+              {book.title} by {book.author}
             </Link>
           </li>
         ))}
       </ul>
 
-      {currentBooks.length === 0 && (
-        <p className="text-gray-500 mt-4">No books found matching your criteria.</p>
-      )}
-
-      <div className="flex justify-center items-center mt-6">
+      <div className="flex justify-between mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 border rounded mx-1 disabled:opacity-50"
+          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
         >
           Previous
         </button>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={`px-3 py-1 border rounded mx-1 ${
-              currentPage === index + 1 ? "bg-gray-200" : ""
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 border rounded mx-1 disabled:opacity-50"
+          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
         >
           Next
         </button>
