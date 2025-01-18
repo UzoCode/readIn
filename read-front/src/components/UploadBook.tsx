@@ -65,13 +65,21 @@ const UploadBook: React.FC = () => {
       });
       setMessage("File uploaded successfully!");
 
+      // Log the response to check its structure
+      console.log(response.data); // Check the structure of the returned book
+
       // Add the new book to the context
-      addBook({
-        id: response.data.id, // Assuming the backend returns the book ID
+      const newBook = {
+        id: response.data.id, // Ensure this is the correct ID returned from the backend
         title: response.data.title,
         author: response.data.author,
         genre: response.data.genre,
-      });
+      };
+
+      // Log the new book details
+      console.log("New Book:", newBook);
+
+      addBook(newBook);
     } catch (err) {
       console.error("Upload error:", err); // Log the error for debugging
       setMessage("Failed to upload file. Please try again.");
