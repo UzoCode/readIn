@@ -77,7 +77,7 @@ const BooksList: React.FC = () => {
         </div>
       )}
 
-      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error message */}
+      {error && <div className="text-red -500 mb-4">{error}</div>} {/* Display error message */}
 
       <div className="mb-6">
         <label htmlFor="searchQuery" className="mr-2 font-semibold">
@@ -114,7 +114,7 @@ const BooksList: React.FC = () => {
 
       <ul className="list-disc pl-5">
         {currentBooks.map((book) => (
-          <li key={book.id} className=" mb-2">
+          <li key={book.id} className="mb-2"> {/* Updated key prop */}
             <Link to={`/books/${book.id}`} className="text-blue-500 hover:underline">
               {book.title} by {book.author}
             </Link>
