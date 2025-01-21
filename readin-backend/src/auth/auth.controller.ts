@@ -7,6 +7,7 @@ import { SignupDto } from './dto/signup.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Endpoints for login and sign 
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<{ token: string; user: { id: number; username: string; email: string } }> {
     return this.authService.login(loginDto);
