@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaService } from '../prisma.service';
 
+// Functionality for auth controller and service
 @Module({
   controllers: [AuthController],
   providers: [AuthService, PrismaService],
