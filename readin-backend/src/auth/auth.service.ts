@@ -5,7 +5,6 @@ import * as jwt from 'jsonwebtoken';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import * as crypto from 'crypto'; // For generating a reset token
-import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { MailService } from '../mail/mail.service'; // Assuming you have a mail service for sending emails
 
@@ -55,35 +54,6 @@ export class AuthService {
       token,
       user: { id: user.id, username: user.username, email: user.email },
     };
-  }
-
-  async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto): Promise<{ message: string }> {
-    const { email } = requestPasswordResetDto;
-  
-    // Ensure email is defined
-    if (!email) {
-      throw new Error('Email is required');
-    }
-  
-    // Find the user by email
-    const user = await this.prisma.user.findUnique({ where: { email: email! } });
-    if (!user) {
-      throw new UnauthorizedException('User  not found');
-    }
-  
-    // Generate a reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-  
-    // Update the user with the reset token and expiry
-    await this.prisma.user.update({
-      where: { email: email! }, // Ensure email is defined
-      data: { resetToken, resetTokenExpiry: new Date(Date.now() + 3600000) }, // Token valid for 1 hour
-    });
-  
-    // Send the reset token to the user's email
-    await this.mailService.sendPasswordResetEmail(email, resetToken);
-  
-    return { message: 'Password reset email sent' };
   }
 
 
