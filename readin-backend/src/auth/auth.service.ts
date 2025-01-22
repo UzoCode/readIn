@@ -11,7 +11,6 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
-
   async signup(signupDto: SignupDto): Promise<{ message: string; user: { id: number; username: string; email: string } }> {
     const { username, email, password } = signupDto;
 
@@ -54,28 +53,27 @@ export class AuthService {
     };
   }
 
-
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
-    const { token, newPassword } = resetPasswordDto;
+    const { newPassword } = resetPasswordDto;
 
     // Ensure newPassword is defined
     if (!newPassword) {
         throw new Error('New password is required');
     }
 
-    // Find the user by the reset token
-    const user = await this.prisma.user.findFirst({ where: { resetToken: token } });
-    if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
-        throw new UnauthorizedException('Invalid or expired reset token');
+    // Find the user by email (you may want to pass email in the DTO)
+    const user = await this.prisma.user.findUnique({ where: { email: resetPasswordDto.email } });
+    if (!user) {
+        throw new UnauthorizedException('User  not found');
     }
 
     // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the user's password and clear the reset token
+    // Update the user's password
     await this.prisma.user.update({
         where: { id: user.id },
-        data: { password: hashedPassword, resetToken: null, resetTokenExpiry: null },
+        data: { password: hashedPassword },
     });
     return { message: 'Password has been reset successfully' };
   }
