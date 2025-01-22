@@ -6,12 +6,10 @@ import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import * as crypto from 'crypto'; // For generating a reset token
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { MailService } from '../mail/mail.service'; // Assuming you have a mail service for sending emails
-
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService, private readonly mailService: MailService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
 
   async signup(signupDto: SignupDto): Promise<{ message: string; user: { id: number; username: string; email: string } }> {
